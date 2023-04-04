@@ -1,3 +1,27 @@
+## Run the Project
+
+### Step 1: Setup the enviorment
+
+### Step 2: Preview the project
+
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+```
+
+## Project Overview
+
+## Client (Frontend)
+
+### Components
+
+## Server (Backend)
+
+### Issues
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started

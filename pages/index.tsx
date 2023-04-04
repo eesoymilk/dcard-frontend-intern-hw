@@ -1,11 +1,14 @@
 import NavBar from "@/components/NavBar";
-import SearchBar from "@/components/SearchBar";
+import ToolBar from "@/components/ToolBar";
 import FilterBar from "@/components/FilterBar";
 import IssuesList from "@/components/IssuesList";
 import Issue from "@/types/Issue";
 import UserData from "@/types/UserData";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import { UIEvent, useMemo, useRef, useState } from "react";
+import { MouseEvent, UIEvent, useMemo, useRef, useState } from "react";
+import IssueModal from "@/components/IssueModal";
+import ModalDetails from "@/types/ModalDetails";
+import Button from "@/components/Button";
 
 const GitHubApiUrl = "https://api.github.com";
 
@@ -35,36 +38,59 @@ export const getServerSideProps: GetServerSideProps<{
   return { props: { userData: userData } };
 };
 
-export default function Index({
+const Index = ({
   userData,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const [query, setQuery] = useState<string>("");
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [issues, setIssues] = useState<Issue[]>([]);
-  const [filter, setFilter] = useState<"open" | "closed">();
-  const pageRef = useRef<number>(1);
-  const filteredIssues = useMemo(() => {
-    return issues.filter((issue) => (filter ? issue.state === filter : true));
-  }, [issues, filter]);
+  const [showModal, setShowModal] = useState(false);
+  const [filter, setFilter] = useState("");
+
+  const queryRef = useRef("");
+  const pageRef = useRef(1);
+  const modalDetailsRef = useRef<ModalDetails>({
+    modalTitle: "New Issue",
+    owner: "",
+    repo: "",
+    issueTitle: "",
+    body: "",
+    labels: [],
+    method: "POST",
+  });
+
+  const filteredIssues = useMemo(
+    () =>
+      filter
+        ? issues.filter((issue) =>
+            issue.labels.some((label) =>
+              label.name.toLowerCase().includes(filter.toLowerCase())
+            )
+          )
+        : issues,
+    [issues, filter]
+  );
 
   const submitQuery = async (queryInput: string) => {
     const Q = encodeURIComponent(
       `${queryInput} is:issue author:${userData?.login}`
     );
     const issuesData = await fetchIssues(Q);
+    console.log(issuesData);
 
-    setQuery(() => Q);
+    queryRef.current = Q;
     setIssues(() => issuesData.items satisfies Issue[]);
+    setFilter(() => "");
     pageRef.current = 1;
   };
 
-  const updateFiliter = (newFilter: "open" | "closed") => {
-    setFilter((currentFilter) =>
-      currentFilter === newFilter ? undefined : newFilter
-    );
+  const updateFilter = (newFilter: string) => {
+    if (!newFilter || newFilter === filter) return;
+    setFilter(() => newFilter);
+    console.log(filter);
+    console.log(filteredIssues);
   };
 
   const handleScroll = async (e: UIEvent<HTMLDivElement>) => {
-    if (!query) return;
+    if (!queryRef.current) return;
 
     const { scrollHeight, scrollTop, clientHeight } = e.currentTarget;
     console.log({ scrollHeight, scrollTop, clientHeight });
@@ -73,23 +99,51 @@ export default function Index({
 
     console.log("We are at the bottom of the lists");
     pageRef.current++;
-    const moreIssuesData = await fetchIssues(query, pageRef.current);
+    const moreIssuesData = await fetchIssues(queryRef.current, pageRef.current);
     setIssues((currentIssues) =>
       currentIssues.concat(moreIssuesData.items satisfies Issue[])
     );
   };
 
+  const initIssueModal = (modalDetails?: ModalDetails) => {
+    if (!modalDetails) {
+      modalDetailsRef.current = {
+        modalTitle: "New Issue",
+        owner: "eesoymilk",
+        repo: "dcard-frontend-intern-hw",
+        issueTitle: "testing new issue",
+        body: "This is me testing out my nextjs app's api that connects the GitHub api to create a new issue from my website. I hope this works...",
+        labels: ["done", "in-progress", "open"],
+        method: "POST",
+      };
+    } else {
+      modalDetailsRef.current = modalDetails;
+    }
+    setShowModal(() => true);
+  };
+
   return (
-    <div className="max-h-screen overflow-y-scroll" onScroll={handleScroll}>
-      <header>
-        <NavBar userData={userData} />
-      </header>
-      <main>
+    <div className="flex flex-col h-screen bg-github-gray-dark">
+      <NavBar userData={userData} />
+      <main className="flex-grow overflow-y-scroll" onScroll={handleScroll}>
         {userData ? (
           <>
-            <SearchBar submitQuery={submitQuery} />
-            <FilterBar updateFilter={updateFiliter} />
-            <IssuesList issues={filteredIssues} />
+            <ToolBar
+              submitQuery={submitQuery}
+              updateFilter={updateFilter}
+              initIssueModal={initIssueModal}
+            />
+            <IssueModal
+              showModal={showModal}
+              closeModal={() => {
+                setShowModal(() => false);
+              }}
+              modalDetails={modalDetailsRef.current}
+            />
+            <IssuesList
+              issues={filteredIssues}
+              initIssueModal={initIssueModal}
+            />
           </>
         ) : (
           <>
@@ -99,4 +153,6 @@ export default function Index({
       </main>
     </div>
   );
-}
+};
+
+export default Index;

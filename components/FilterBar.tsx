@@ -1,17 +1,25 @@
-import { FormEvent, useRef } from "react";
+import { FormEvent, MouseEvent, useRef } from "react";
 
 export default function FilterBar({
+  getCurrentFilter,
   updateFilter,
 }: {
+  getCurrentFilter: () => "open" | "closed" | undefined;
   updateFilter: (newFilter: "open" | "closed") => void;
 }) {
-  const handleClick = () => {};
-  const filteredButtons = ["open", "closed"].map((option) => (
+  const options = ["open", "closed"];
+  const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
+    updateFilter(e.currentTarget.value as "open" | "closed");
+  };
+  const filteredButtons = options.map((option) => (
     <>
       <button
         key={option}
+        value={option}
         type="button"
-        className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l"
+        className={`${
+          option === getCurrentFilter() ? "bg-gray-700" : ""
+        } bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l`}
         onClick={handleClick}
       >
         {option}
