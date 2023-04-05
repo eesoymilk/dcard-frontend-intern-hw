@@ -13,6 +13,8 @@ const getIssues = async (
   headers: Headers,
   queryParams: string
 ): Promise<Issue[]> => {
+  console.log(`${apiUrl}/search/issues?${queryParams}`);
+
   const issuesResponse = await fetch(`${apiUrl}/search/issues?${queryParams}`, {
     headers: headers,
   });
@@ -106,6 +108,8 @@ export default async function handler(
       const { q, page } = req.query;
       const queryParams = `q=${q}&per_page=10&page=${page}`;
       const issuesData = await getIssues(headers, queryParams);
+      console.table(issuesData);
+
       res.status(200).json(issuesData);
       break;
 

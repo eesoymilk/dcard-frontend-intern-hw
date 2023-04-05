@@ -2,6 +2,7 @@ import ModalDetails from "@/types/ModalDetails";
 import { FormEvent, useState } from "react";
 import { MdClose } from "react-icons/md";
 import ModalTextInput from "./ModalTextInput";
+import { useRouter } from "next/router";
 
 const IssueModal = ({
   showModal,
@@ -12,26 +13,7 @@ const IssueModal = ({
   closeModal: () => void;
   modalDetails: ModalDetails;
 }) => {
-  const createIssue = async () => {};
-  const updateIssue = async () => {
-    // const { owner, repo, issue_number, title, body, labels } = modalDetails;
-    // const res = await fetch("/api/issues", {
-    //   method: "PATCH",
-    //   headers: {
-    //     Accept: "application/json",
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     owner,
-    //     repo,
-    //     issue_number,
-    //     issueTitle,
-    //     body,
-    //     labels,
-    //   }),
-    // });
-    // closeModal();
-  };
+  const router = useRouter();
   const submitIssue = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const { owner, repo, issueTitle, body, labels } = e.currentTarget;
@@ -65,6 +47,8 @@ const IssueModal = ({
         }),
       });
     }
+
+    router.reload();
   };
   return (
     <>

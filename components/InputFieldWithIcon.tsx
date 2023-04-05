@@ -20,7 +20,7 @@ export default function InputFieldWithIcon({
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex justify-center items-center bg-transparent p-4"
+      className="text-neutral-200 flex justify-center items-center bg-transparent p-4"
     >
       <label htmlFor={label} className="text-white hidden">
         Query

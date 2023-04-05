@@ -42,7 +42,7 @@ const IssuesCard = ({
         <h2 className="mb-2 text-xl font-medium leading-tight text-neutral-50">
           {issue.title}
         </h2>
-        <h3 className="mb-2 text-l font-medium leading-tight text-github-gray-light">
+        <h3 className="font-mono mb-2 text-l font-medium leading-tight text-github-gray-light">
           {issue.url.replace(`${GitHubApiUrl}/repos`, "").split("/issues/")[0]}
         </h3>
         {labelChips.length ? (
