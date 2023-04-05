@@ -5,10 +5,12 @@ import ModalTextInput from "./ModalTextInput";
 import { useRouter } from "next/router";
 
 const IssueModal = ({
+  isNew,
   showModal,
   closeModal,
   modalDetails,
 }: {
+  isNew: boolean;
   showModal: boolean;
   closeModal: () => void;
   modalDetails: ModalDetails;
@@ -24,6 +26,7 @@ const IssueModal = ({
     const requestBody = {
       owner: owner.value as string,
       repo: repo.value as string,
+      issue_number: modalDetails.issue_number,
       title: issueTitle.value as string,
       body: body.value as string,
       labels: (labels.value as string).split(",").map((s) => s.trim()),
@@ -31,24 +34,13 @@ const IssueModal = ({
 
     console.table(requestBody);
 
-    if (modalDetails.method === "POST") {
-      fetch("/api/issues", {
-        method: "POST",
-        headers,
-        body: JSON.stringify(requestBody),
-      });
-    } else {
-      fetch("/api/issues", {
-        method: "PATCH",
-        headers,
-        body: JSON.stringify({
-          issue_number: modalDetails.issue_number,
-          ...requestBody,
-        }),
-      });
-    }
-
-    router.reload();
+    fetch("/api/issues", {
+      method: isNew ? "POST" : "PATCH",
+      headers,
+      body: JSON.stringify(requestBody),
+    }).then(() => {
+      router.reload();
+    });
   };
   return (
     <>
@@ -59,12 +51,12 @@ const IssueModal = ({
               {/*content*/}
               <form
                 onSubmit={submitIssue}
-                className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-gray-light"
+                className="border-0 rounded-lg shadow-lg relative flex flex-col h-[50vh] w-full bg-gray-light"
               >
                 {/*header*/}
-                <div className="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t">
+                <div className="basis-[10%] flex items-start justify-between p-5 border-b border-solid border-github-gray-light rounded-t">
                   <h2 className="text-3xl font-semibold">
-                    {modalDetails.modalTitle}
+                    {isNew ? "New Issue" : "Edit Issue"}
                   </h2>
                   <button
                     title="close modal"
@@ -77,39 +69,56 @@ const IssueModal = ({
                   </button>
                 </div>
                 {/*body*/}
-                <div className="relative p-6 flex-auto flex flex-col gap-4">
-                  <div className="flex justify-between items-center">
-                    <h3 className="basis-1/5">owner/repo</h3>
-                    <ModalTextInput
-                      label="owner"
-                      defaultValue={modalDetails.owner}
-                    />
-                    <ModalTextInput
-                      label="repo"
-                      defaultValue={modalDetails.repo}
-                    />
+                <div className="flex-1 h-full relative p-6 flex flex-col gap-4">
+                  <div className="basis-1/6 flex justify-between items-center">
+                    <h3 className="basis-1/5 text-center font-mono font-medium text-l">
+                      owner/repo
+                    </h3>
+                    <div className="basis-4/5 flex justify-center items-center gap-1">
+                      <ModalTextInput
+                        disabled={!isNew}
+                        label="owner"
+                        defaultValue={modalDetails.owner}
+                      />
+                      <p className="fpnt-mono text-3xl">/</p>
+                      <ModalTextInput
+                        disabled={!isNew}
+                        label="repo"
+                        defaultValue={modalDetails.repo}
+                      />
+                    </div>
                   </div>
-                  <div className="flex justify-center items-center">
-                    <h3 className="basis-1/5">Title</h3>
-                    <ModalTextInput
-                      label="issueTitle"
-                      defaultValue={modalDetails.issueTitle}
-                    />
+                  <div className="basis-1/6 flex justify-center items-center">
+                    <h3 className="font-medium text-l basis-1/5 text-center">
+                      Title
+                    </h3>
+                    <div className="basis-4/5">
+                      <ModalTextInput
+                        label="issueTitle"
+                        defaultValue={modalDetails.issueTitle}
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <h3>Body</h3>
-                    <label htmlFor="body" className="hidden">
+                  <div className="basis-1/2 flex-1 flex justify-center items-center">
+                    <h3 className="font-medium text-l basis-1/5 text-center">
                       Body
-                    </label>
-                    <textarea
-                      id="body"
-                      name="body"
-                      defaultValue={modalDetails.body}
-                      className="w-full m-0 p-2 block rounded-l border border-solid border-gray bg-neutral-200"
-                    />
+                    </h3>
+                    <div className="basic-4/5 flex-1 h-full">
+                      <label htmlFor="body" className="hidden">
+                        Body
+                      </label>
+                      <textarea
+                        id="body"
+                        name="body"
+                        defaultValue={modalDetails.body}
+                        className="h-full w-full m-0 p-2 block rounded-l border border-solid border-gray bg-neutral-200"
+                      />
+                    </div>
                   </div>
-                  <div className="flex justify-center items-center">
-                    <h3 className="basis-1/5">Labels</h3>
+                  <div className="basis-1/6 flex justify-center items-center">
+                    <h3 className="font-medium text-l basis-1/5 text-center">
+                      Labels
+                    </h3>
                     <div className="flex-1">
                       <ModalTextInput
                         label="labels"
@@ -119,7 +128,7 @@ const IssueModal = ({
                   </div>
                 </div>
                 {/*footer*/}
-                <div className="flex items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">
+                <div className="basis-[10%] flex items-center justify-end p-6 border-t border-solid border-github-gray-light rounded-b">
                   <button
                     className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                     type="button"

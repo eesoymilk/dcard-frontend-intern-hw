@@ -4,9 +4,11 @@ import Issue from "@/types/Issue";
 import UserData from "@/types/UserData";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { useRouter } from "next/router";
-import { MdOutlineDelete } from "react-icons/md";
+import { MdOutlineDelete, MdOutlineEdit } from "react-icons/md";
 import { IoArrowUndo } from "react-icons/io5";
-import { MouseEvent } from "react";
+import { MouseEvent, useState, useRef } from "react";
+import ModalDetails from "@/types/ModalDetails";
+import IssueModal from "@/components/IssueModal";
 
 const GitHubApiUrl = "https://api.github.com";
 
@@ -44,7 +46,31 @@ const IssueNumber = ({
   issue,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
+  const [showModal, setShowModal] = useState(false);
   const { owner, repo, issue_number } = router.query;
+  const modalDetailsRef = useRef<ModalDetails>({
+    owner: owner as string,
+    repo: repo as string,
+    issue_number: parseInt(issue_number as string),
+    issueTitle: issue?.title || "",
+    body: issue?.body || "",
+    labels: issue?.labels.map((label) => label.name) || [],
+  });
+
+  if (!userData || !issue) {
+    router.push("/");
+    return <></>;
+  }
+
+  const labelChips = issue?.labels.map((label) => (
+    <div
+      key={label.id}
+      className={`bg-[#${label.color}] border-github-gray-light border-[1px] center relative inline-block select-none whitespace-nowrap rounded-full py-2 px-3.5 align-baseline font-sans text-xs font-bold uppercase leading-none text-neutral-200`}
+    >
+      {label.name}
+    </div>
+  ));
+
   const closeIssue = async () => {
     const res = await fetch("/api/issues", {
       method: "DELETE",
@@ -61,14 +87,17 @@ const IssueNumber = ({
     router.back();
   };
 
-  const labelChips = issue?.labels.map((label) => (
-    <div
-      key={label.id}
-      className={`bg-[#${label.color}] border-github-gray-light border-[1px] center relative inline-block select-none whitespace-nowrap rounded-full py-2 px-3.5 align-baseline font-sans text-xs font-bold uppercase leading-none text-neutral-200`}
-    >
-      {label.name}
-    </div>
-  ));
+  const initIssueModal = () => {
+    modalDetailsRef.current = {
+      owner: owner as string,
+      repo: repo as string,
+      issue_number: parseInt(issue_number as string),
+      issueTitle: issue.title,
+      body: issue.body,
+      labels: issue.labels.map((label) => label.name),
+    };
+    setShowModal(() => true);
+  };
 
   return (
     <div className="flex flex-col h-screen bg-github-gray-dark">
@@ -99,13 +128,30 @@ const IssueNumber = ({
                 router.back();
               }}
             />
-            <Button
-              value="Delete"
-              icon={<MdOutlineDelete size="1.5rem" />}
-              onClick={closeIssue}
-            />
+            <div className="flex justify-center items-center gap-4">
+              <Button
+                value="Edit"
+                icon={<MdOutlineEdit size="1.25rem" className="mx-1" />}
+                onClick={() => {
+                  initIssueModal();
+                }}
+              />
+              <Button
+                value="Delete"
+                icon={<MdOutlineDelete size="1.5rem" />}
+                onClick={closeIssue}
+              />
+            </div>
           </div>
         </div>
+        <IssueModal
+          isNew={false}
+          showModal={showModal}
+          closeModal={() => {
+            setShowModal(() => false);
+          }}
+          modalDetails={modalDetailsRef.current}
+        />
       </main>
     </div>
   );

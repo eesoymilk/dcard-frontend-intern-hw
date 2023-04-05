@@ -1,32 +1,18 @@
 import Issue from "@/types/Issue";
 import Button from "./Button";
 import ModalDetails from "@/types/ModalDetails";
-import { MdOutlineMoreHoriz, MdOutlineEdit } from "react-icons/md";
+import { MdOutlineMoreHoriz } from "react-icons/md";
 import { useRouter } from "next/router";
 
 const GitHubApiUrl = "https://api.github.com";
 
 const IssuesCard = ({
   issue,
-  initIssueModal,
 }: {
   issue: Issue;
   initIssueModal: (modalDetails?: ModalDetails) => void;
 }) => {
   const router = useRouter();
-  const [owner, repo, _, issue_number] = issue.url
-    .replace(`${GitHubApiUrl}/repos/`, "")
-    .split("/");
-  const modalDetails = {
-    modalTitle: "Edit Issue",
-    owner,
-    repo,
-    issue_number: parseInt(issue_number),
-    issueTitle: issue.title,
-    body: issue.body,
-    labels: issue.labels.map((label) => label.name),
-    method: "PATCH",
-  } satisfies ModalDetails;
   const labelChips = issue.labels.map((label) => (
     <div
       key={label.id}
@@ -51,19 +37,12 @@ const IssuesCard = ({
           </div>
         ) : null}
         <p className="mb-4 text-base text-neutral-200">{issue.body}</p>
-        <div className="flex justify-between items-center">
+        <div className="flex justify-end items-center">
           <Button
             value="More"
             icon={<MdOutlineMoreHoriz size="1.25rem" className="mx-1" />}
             onClick={() => {
               router.push(issue.url.replace(`${GitHubApiUrl}/repos`, ""));
-            }}
-          />
-          <Button
-            value="Edit"
-            icon={<MdOutlineEdit size="1.25rem" className="mx-1" />}
-            onClick={() => {
-              initIssueModal(modalDetails);
             }}
           />
         </div>

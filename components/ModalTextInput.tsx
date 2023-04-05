@@ -3,9 +3,11 @@ import { FormEvent, useState } from "react";
 import { MdClose } from "react-icons/md";
 
 const ModalTextInput = ({
+  disabled,
   label,
   defaultValue,
 }: {
+  disabled?: boolean;
   label: string;
   defaultValue: string;
 }) => (
@@ -15,10 +17,11 @@ const ModalTextInput = ({
     </label>
     <input
       id={label}
+      disabled={disabled}
       name={label}
       type="text"
       defaultValue={defaultValue}
-      className="w-full m-0 p-2 block rounded-l border border-solid border-gray bg-neutral-200"
+      className="w-full m-0 p-2 block rounded-l border border-solid border-gray bg-neutral-200 disabled:bg-github-gray-light"
     />
   </div>
 );

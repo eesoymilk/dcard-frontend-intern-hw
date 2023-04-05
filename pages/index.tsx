@@ -16,6 +16,7 @@ import IssueModal from "@/components/IssueModal";
 import ModalDetails from "@/types/ModalDetails";
 import { useRouter } from "next/router";
 import IssueData from "@/types/IssueData";
+import Head from "next/head";
 
 const GitHubApiUrl = "https://api.github.com";
 
@@ -82,13 +83,11 @@ const Index = ({
     Math.ceil(initialIssuesData?.total_count || 0 / 10)
   );
   const modalDetailsRef = useRef<ModalDetails>({
-    modalTitle: "New Issue",
-    owner: "",
+    owner: userData?.login || "",
     repo: "",
     issueTitle: "",
     body: "",
     labels: [],
-    method: "POST",
   });
 
   const filteredIssues = useMemo(
@@ -136,52 +135,48 @@ const Index = ({
     setIssues((currentIssues) => currentIssues.concat(moreIssuesData.items));
   };
 
-  const initIssueModal = (modalDetails?: ModalDetails) => {
-    if (!modalDetails) {
-      modalDetailsRef.current = {
-        modalTitle: "New Issue",
-        owner: "eesoymilk",
-        repo: "dcard-frontend-intern-hw",
-        issueTitle: "testing new issue",
-        body: "This is me testing out my nextjs app's api that connects the GitHub api to create a new issue from my website. I hope this works...",
-        labels: ["done", "in-progress", "open"],
-        method: "POST",
-      };
-    } else {
-      modalDetailsRef.current = modalDetails;
-    }
+  const initIssueModal = () => {
+    modalDetailsRef.current = {
+      owner: userData?.login || "",
+      repo: "",
+      issueTitle: "",
+      body: "",
+      labels: [],
+    };
     setShowModal(() => true);
   };
 
   return (
-    <div className="flex flex-col h-screen bg-github-gray-dark">
-      <NavBar userData={userData} />
-      <main className="flex-grow overflow-y-scroll" onScroll={handleScroll}>
-        {userData ? (
-          <>
-            <ToolBar
-              updateFilter={updateFilter}
-              initIssueModal={initIssueModal}
-            />
-            <IssueModal
-              showModal={showModal}
-              closeModal={() => {
-                setShowModal(() => false);
-              }}
-              modalDetails={modalDetailsRef.current}
-            />
-            <IssuesList
-              issues={filteredIssues}
-              initIssueModal={initIssueModal}
-            />
-          </>
-        ) : (
-          <>
-            <p>You must login first!</p>
-          </>
-        )}
-      </main>
-    </div>
+    <>
+      <Head>
+        <title>Dcard Frontend Intern Homework</title>
+      </Head>
+      <div className="flex flex-col h-screen bg-github-gray-dark">
+        <NavBar userData={userData} />
+        <main className="flex-grow overflow-y-scroll" onScroll={handleScroll}>
+          {userData ? (
+            <>
+              <ToolBar
+                updateFilter={updateFilter}
+                initIssueModal={initIssueModal}
+              />
+              <IssueModal
+                isNew={true}
+                showModal={showModal}
+                closeModal={() => {
+                  setShowModal(() => false);
+                }}
+                modalDetails={modalDetailsRef.current}
+              />
+              <IssuesList
+                issues={filteredIssues}
+                initIssueModal={initIssueModal}
+              />
+            </>
+          ) : null}
+        </main>
+      </div>
+    </>
   );
 };
 

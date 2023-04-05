@@ -1,3 +1,5 @@
+const { fontFamily } = require("tailwindcss/defaultTheme");
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -24,6 +26,9 @@ module.exports = {
             dark: "#0d1117",
           },
         },
+      },
+      fontFamily: {
+        sans: ["var(--font-roboto)", ...fontFamily.sans],
       },
     },
   },
