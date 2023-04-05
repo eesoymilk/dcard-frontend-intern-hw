@@ -6,16 +6,16 @@
 
 ### Method 2: Host it on your machine
 
-1. Create a `.env.local` file to store your `CLIENT_ID` and `CLIENT_SECRET`
+1. Create a `.env.local` file to store your `CLIENT_ID` and `CLIENT_SECRET`.
 
-   Prefix each environment variable with `NEXT_PUBLIC` to make it accessible in the Next.js project
+   Prefix each environment variable with `NEXT_PUBLIC` to make it accessible in the Next.js project.
 
    ```
    NEXT_PUBLIC_CLIENT_ID=<YOUR_CLIENT_ID>
    NEXT_PUBLIC_CLIENT_SECRET=<YOUR_CLIENT_SECRET>
    ```
 
-1. Setup the environment
+1. Setup the environment.
 
    ```bash
    npm install
@@ -25,7 +25,7 @@
    pnpm install
    ```
 
-1. Run the Development Server
+1. Run the Development Server.
 
    ```bash
    npm run dev
