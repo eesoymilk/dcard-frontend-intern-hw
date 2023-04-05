@@ -39,7 +39,7 @@
 
 ---
 
-## Bonus Points
+## Bonus Points (3/4)
 
 - [x] Using TypeScript
 - [x] Not using any wrapper package for GitHub API
@@ -83,7 +83,7 @@ For this homework, I use a **TypeScript** [Next.js](https://nextjs.org/) project
 
 - `/`
 
-  This is the home page. After logging into GitHub, you should be redirected to this page and it should contain every issue you created by default. You can do further searching with the search bar on the left, and you can filter the issues by label names using the filter bar on the right. Lastly, there is a
+  This is the home page. After logging into GitHub, you should be redirected to this page and it should contain 10 of the issues you created by default. You can do further searching with the search bar on the left, and you can filter the issues by label names using the filter bar on the right. Also, there is a "New Issue" button to create a new issue. Lastly, by default, the page will show only first 10 recent issues, but if you scroll to the bottom of the page, a request will happen automatically to fetch 10 more issues until there is no more.
 
   - Query Parameters
 
