@@ -6,7 +6,16 @@
 
 ### Method 2: Host it on your machine
 
-1. Setup the enviorment
+1. Create a `.env.local` file to store your `CLIENT_ID` and `CLIENT_SECRET`
+
+   Prefix each environment variable with `NEXT_PUBLIC` to make it accessible in the Next.js project
+
+   ```
+   NEXT_PUBLIC_CLIENT_ID=<YOUR_CLIENT_ID>
+   NEXT_PUBLIC_CLIENT_SECRET=<YOUR_CLIENT_SECRET>
+   ```
+
+1. Setup the environment
 
    ```bash
    npm install
@@ -39,7 +48,7 @@
 
 ---
 
-## Additional Tweeks to the Original Homework
+## Some Tweaks to the Original Homework
 
 Some instructions in the homework were unclear and I did send an e-mail regarding those concerns but the reply was never received. Therefore, I made some changes to the homework so that it is do-able and reasonable.
 
@@ -60,7 +69,7 @@ For this homework, I use a **TypeScript** [Next.js](https://nextjs.org/) project
 
 - [Tailwind CSS](https://tailwindcss.com/)
 
-  This had been a tech piece I was eagering to try out and I took this opportunity to finally step my foot into this eco-system. I gotta say, I wish I had known to use Tailwind CSS earlier because it is so good.
+  This had been a tech piece I was eager to try out and I took this opportunity to finally step my foot into this eco-system. I gotta say, I wish I had known to use Tailwind CSS earlier because it is so good.
 
 - [React Icons](https://react-icons.github.io/react-icons/)
 
@@ -68,13 +77,13 @@ For this homework, I use a **TypeScript** [Next.js](https://nextjs.org/) project
 
 - [cookie](https://www.npmjs.com/package/cookie)
 
-  Since I want my project to be as secure as possible, instead of storing GitHub's token in the browser (session stroage or local storage), I store them in a **httpOnly cookie**. This prevent **XSS** (cross-site scripting) since the cookie is not visible to any frontend JavaScript code and this cookie package is a wrapper around setting and reading cookie on the server.
+  Since I want my project to be as secure as possible, instead of storing GitHub's token in the browser (session storage or local storage), I store them in a **httpOnly cookie**. This prevent **XSS** (cross-site scripting) since the cookie is not visible to any frontend JavaScript code and this cookie package is a wrapper around setting and reading cookie on the server.
 
 ### Routing
 
 - `/`
 
-  This is the home page. After logining to GitHub, you should be redirected to this page and it should contain every issue you created by default. You can do further searching with the search bar on the left, and you can filter the issues by label names using the filter bar on the right. Lastly, there is a
+  This is the home page. After logging into GitHub, you should be redirected to this page and it should contain every issue you created by default. You can do further searching with the search bar on the left, and you can filter the issues by label names using the filter bar on the right. Lastly, there is a
 
   - Query Parameters
 
@@ -95,7 +104,7 @@ For this homework, I use a **TypeScript** [Next.js](https://nextjs.org/) project
 
 - `[owner]/[repos]/issues/[issue_number]`
 
-  This is the detail page of an issue. Note that the path is identical as the path to get an issue from GitHub's API. This is intentional since it simplies our code a little. You can go back to the home page by clicking the "Go Back" button and close the issue by clicking the "Delete" button which will also redirect you back to home page.
+  This is the detail page of an issue. Note that the path is identical as the path to get an issue from GitHub's API. This is intentional since it simplifies our code a little. You can go back to the home page by clicking the "Go Back" button and close the issue by clicking the "Delete" button which will also redirect you back to home page.
 
 ### API Routes
 
